@@ -12,8 +12,7 @@ public class HelloWorldClient {
             DataOutputStream dos = new DataOutputStream(out);
             DataInputStream dis = new DataInputStream(socket.getInputStream());
             String message = "Hello World!";
-            dos.writeUTF(message);
-            message.flush();
+            dos.writeUTF(message);;
         } catch (IOException e) {
             System.out.println("Houston tenemos un problema");
             System.out.println(e);

@@ -1,24 +1,25 @@
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.io.IOException;
 
 public class HelloWorldServer {
-    public static void main(String[] args) throws IOException {
-
-        int port = 12345;
-
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
-
-            Socket server = serverSocket.accept();
-
-            System.out.println("Client connected " + server.getInetAddress());
-
-            DataInputStream dis = new DataInputStream(server.getInputStream());
-            DataOutputStream dos = new DataOutputStream(server.getOutputStream());
-
-
+    public static void main(String[] args) {
+        try{
+            ServerSocket serverSocket = new ServerSocket(12345);
+            Socket s =  serverSocket.accept();
+            DataInputStream dis = new DataInputStream(s.getInputStream());
+            String paraula = dis.readUTF();
+            System.out.println("He rebut pel socket: " + paraula);
+            serverSocket.close();
+        }
+        catch(ConnectException ce){
+            System.out.println("Problema de xarxa");
+            throw new RuntimeException(ce);
+        }
+        catch(Exception e){
+            System.out.println("Problema desconegut");
+            throw new RuntimeException(e);
         }
     }
 }
