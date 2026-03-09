@@ -7,45 +7,30 @@ import java.net.Socket;
 public class InteractiveServer {
 
     public static void main(String[] args) {
+        System.out.println("Hello soc l'InteractiveServer");
 
-        System.out.println("Welcome to Interactive Server");
-
-        try {
-            System.out.println("Esperant al client...");
-            ServerSocket ss = new ServerSocket(3455);
+        try (ServerSocket ss = new ServerSocket(2234)) {
+            System.out.println("Esperant client");
 
             while (true) {
-                Socket s = ss.accept();
-                System.out.println("Connectat!");
+                try (Socket s = ss.accept();
+                     DataInputStream din = new DataInputStream(s.getInputStream());
+                     DataOutputStream dout = new DataOutputStream(s.getOutputStream())) {
 
-                DataInputStream dis = new DataInputStream(s.getInputStream());
-                DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+                    System.out.println("Established connection");
 
-                String linia = "";
-                String transformaçao;
+                    String liniaLlegida = "";
 
-                while (!linia.equals("FI")) {
-                    linia = dis.readUTF();
-                    System.out.println("He puto llegit: " + linia);
+                    while (!liniaLlegida.equals("FI")) {
+                        liniaLlegida = din.readUTF();
+                        System.out.println("He llegit: " + liniaLlegida);
 
-                    if (linia.equals("FI")) {
-                        // no retornem res si és FI; tanquem i esperem el següent client
-                        break;
+                        String liniaTransformada = liniaLlegida.toUpperCase();
+                        dout.writeUTF(liniaTransformada);
+                        dout.flush();
                     }
-
-                    transformaçao = linia.toUpperCase();
-                    dos.writeUTF(transformaçao);
-                    dos.flush();
                 }
-
-                // Tanquem la connexió d'aquest client
-                dis.close();
-                dos.close();
-                s.close();
-
-                System.out.println("Connexió tancada. Esperant el següent client...");
             }
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

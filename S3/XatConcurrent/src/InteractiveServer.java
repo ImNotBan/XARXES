@@ -38,7 +38,7 @@ public class InteractiveServer {
                     dos.flush();
                 }
 
-                // Tanquem la connexió d'aquest client
+                // tanquem la connexió d'aquest client
                 dis.close();
                 dos.close();
                 s.close();
